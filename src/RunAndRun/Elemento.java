@@ -8,7 +8,7 @@ import javax.swing.ImageIcon;
 import base.Animado;
 import base.Dibujable;
 
-//mejora la interface
+//esto no anda!
 
 public abstract class Elemento implements Dibujable, Animado {
 
