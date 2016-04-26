@@ -4,6 +4,8 @@ import java.awt.Graphics;
 
 import javax.swing.ImageIcon;
 
+//@@@@@@
+
 public class Jugador extends Elemento {
 
 	private boolean invulnerable;
