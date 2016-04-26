@@ -4,7 +4,7 @@ import java.awt.Graphics;
 
 import javax.swing.ImageIcon;
 
-//@@@@@@
+// metodo funcionando
 
 public class Jugador extends Elemento {
 
