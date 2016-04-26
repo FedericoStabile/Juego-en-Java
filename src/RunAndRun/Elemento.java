@@ -8,6 +8,8 @@ import javax.swing.ImageIcon;
 import base.Animado;
 import base.Dibujable;
 
+//mejora la interface
+
 public abstract class Elemento implements Dibujable, Animado {
 
 	private int x;
