@@ -9,17 +9,17 @@ create table FILTER
 )
 
 
-
 create table ALBUM
 (
 	id_album          numeric(10,0) identity (1,1),
-	album_nombre      nvarchar(255),
+	album_path        nvarchar(255),
 	album_dicImagen   nvarchar(255),
 	fecha_modificacion  datetime,
 
 
 	PRIMARY KEY (id_album)
 )
+
 
 
 create table FILTER_ALBUM
@@ -32,6 +32,7 @@ create table FILTER_ALBUM
 	FOREIGN KEY (fa_filter)     references FILTER(id_filter) 
 	
 )
+
 
 
 create table LABEL
