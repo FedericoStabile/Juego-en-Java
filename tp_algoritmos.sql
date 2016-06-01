@@ -100,3 +100,46 @@ declare @cant int
 
 
 end
+
+
+-- seter de ALBUM. Devuelve su id correspondiente (@id_album)
+create procedure st_insert_ALBUM
+@album_path nvarchar(255),
+@album_dicImagen nvarchar(255),
+@fecha_modificacion datetime,
+@id_album numeric(10,0) output
+as
+begin
+
+    insert into ALBUM (album_path,album_dicImagen,fecha_modificacion)
+	values (@album_path, @album_dicImagen,@fecha_modificacion)
+	set @id_album = scope_identity()
+    
+end
+
+--seter FILTER. Devuelve su id correspondiente (@id_filter)
+create procedure st_insert_FILTER
+@filter_nombre nvarchar(255),
+@id_filter numeric(10,0) output
+as
+begin
+
+    insert into FILTER (filter_nombre)
+	values (@filter_nombre)
+	set @id_filter = scope_identity()
+    
+end
+
+--seter LABEL, @filter el el id_filter al cual pertenece. Devuelve su id correspondiente (@id_label)
+create procedure st_insert_LABEL
+@label_nombre nvarchar(255),
+@filter numeric(10,0),
+@id_label numeric(10,0) output
+as
+begin
+
+    insert into FILTER (label_nombre,filter)
+	values (@label_nombre,@filter)
+	set @id_label = scope_identity()
+    
+end
