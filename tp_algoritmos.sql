@@ -76,7 +76,26 @@ declare @cant int
       ELSE
 	   SET @bool=0
 
-	   print @bool
-	   print @id_label
+end
+
+ --si esta en la tabla de filter te devuelve  @bool =1 y @id_filter el id corespondiente, si no esta @bool = 0 y @id_filter es basura
+ create procedure st_estasEnLaTabla_Filter
+ @nombre nvarchar(255),
+ @bool bit out,
+ @id_filter numeric(10,0) out
+as
+begin
+declare @cant int
+
+      select @cant= count(*),@id_filter = id_filter
+	  from FILTER
+	  where filter_nombre =@nombre
+	  group by id_filter
+
+	  if (@cant <> 0)
+	   SET @bool=1
+      ELSE
+	   SET @bool=0
+
 
 end
