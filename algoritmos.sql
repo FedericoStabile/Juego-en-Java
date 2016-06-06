@@ -9,6 +9,7 @@ create table FILTER
 )
 
 
+
 create table ALBUM
 (
 	id_album          numeric(10,0) identity (1,1),
