@@ -6,12 +6,18 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+
 public class BaseDeDatos {
 	
-	 private Connection conexion;
+	 private Connection conexion = null;
 	 
 
-	 public BaseDeDatos(String driver,String url,String usuario,String pass) {
+	 public Connection getConexion()
+	{
+		return conexion;
+	}
+
+	public BaseDeDatos(String driver,String url,String usuario,String pass) {
 		
 			try
 			{			
@@ -30,20 +36,7 @@ public class BaseDeDatos {
 				throw new RuntimeException(ex1);
 			}
 			
-			
-			finally
-			{
-				try
-				{
-
-					if(conexion!= null) conexion.close();
-				}
-				catch(Exception ex2)
-				{
-					ex2.printStackTrace();
-					throw new RuntimeException(ex2);
-				}
-			}		
+		
 	}
 	 
 	 
@@ -56,30 +49,6 @@ public class BaseDeDatos {
 		}
 	 }
 
-
-	 public void getConsulta(String unaConsulta){
-		
-		PreparedStatement consulta = null;
-		ResultSet resultados = null;
-		
-		//preparo y ejecuto la sentencia
-		try {
-			consulta = conexion.prepareStatement(unaConsulta);
-			resultados = consulta.executeQuery();
-			
-			while( resultados.next() )
-			{
-				System.out.print(resultados.getInt("id_label")+",");
-				System.out.print(resultados.getString("label_nombre")+",");
-				System.out.println(resultados.getInt("filter")+",");
-
-			}
-			
-		} catch (SQLException e) {
-			e.printStackTrace();
-			throw new RuntimeException(e);
-		}
-	 }
 	
 	
 	 //te devuelvo un cero si no lo encontro
@@ -89,10 +58,10 @@ public class BaseDeDatos {
 
 		try {
 			// ejecuto el store
-
-			consulta = conexion.prepareCall("{call dbo.st_estasEnLaTabla_Label(?)}");
+			System.out.println(this.getConexion()+",");
+		    consulta = conexion.prepareCall("{call dbo.st_estasEnLaTabla_Label(?,?,?)}");
 			consulta.setString(1, unLabel);
-			consulta.registerOutParameter(2, java.sql.Types.BOOLEAN);
+			consulta.registerOutParameter(2, java.sql.Types.INTEGER);
 			consulta.registerOutParameter(3, java.sql.Types.INTEGER);
 			consulta.execute();
 			
@@ -104,9 +73,9 @@ public class BaseDeDatos {
 				return 0;
 			}
 
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new RuntimeException(e);
+		} catch (Exception e4) {
+			e4.printStackTrace();
+			throw new RuntimeException(e4);
 		}
 		
 
@@ -120,8 +89,9 @@ public class BaseDeDatos {
 			consulta = conexion.prepareCall("{call dbo.st_insert_FILTER(?,?)}");
 			consulta.setString(1, unFiler);
 			consulta.registerOutParameter(2, java.sql.Types.INTEGER);
+			consulta.execute();
 			
-			return consulta.getInt(3);
+			return consulta.getInt(2);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
