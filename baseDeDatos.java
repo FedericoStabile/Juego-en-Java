@@ -1,4 +1,4 @@
-package algoII.tp.DAOs;
+package algoII.tp.Imples;
 
 import java.io.File;
 import java.sql.CallableStatement;
@@ -10,7 +10,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import algoII.tp.Imples.Factory;
+import algoII.tp.DAOs.FilterDAO;
+import algoII.tp.DAOs.LabelDAO;
+import algoII.tp.DAOs.TitleDAO;
 import algoII.tp.def.Filter;
 import algoII.tp.def.Label;
 import algoII.tp.def.Title;
@@ -19,9 +21,9 @@ import algoII.tp.def.Title;
 public class BaseDeDatos {
 	
 	
-	private static File baseDatos = new File("DirBD");//revisar properties para que
-	private long modBD = baseDatos.lastModified();
-	 private Connection conexion = null;
+//	private static File baseDatos = new File("DirBD");//revisar properties para que
+//	private long modBD = baseDatos.lastModified();
+	private Connection conexion = null;
 	 
 
 	 public Connection getConexion()
@@ -256,80 +258,80 @@ public class BaseDeDatos {
 	}
 	
 	//Funciones que faltan
-		public boolean seModifico(File file)
-		{
-			long ms = file.lastModified();
-			return (ms > modBD);
-			
-		}
-		
+//		public boolean seModifico(File file)
+//		{
+//			long ms = file.lastModified();
+//			return (ms > modBD);
+//			
+//		}
+//		
 		public void arregloDeLinea(File file, ArrayList<String> lineaInfo)
 		{
-			Filter filter = this.verExistenciaFilter(lineaInfo.remove(0));
-			Title album = this.verExistenciaTitulo(file.getParent());
+			int idFilter = this.verExistenciaFilter(lineaInfo.remove(0)); //hacerlo int, y revisar estasEnLaTabla (cambiar estasEnLaTabla para insertar)
+			int idAlbum = this.verExistenciaTitulo(file.getParent());      //lo mismo que arriba
 			
-			this.enlazarAlbumFilter(album, filter);
+			this.enlazarAlbumFilter(idAlbum, idFilter);                        //directamente paso el ID
 			
 			for(String name: lineaInfo)
 			{
-				Label label = this.verExistenciaLabel(name);
-				enlazarFilterLabel(filter, label);		
-				enlazarAalbumLabel(album, label);
+				int idLabel = this.verExistenciaLabel(name);
+				enlazarFilterLabel(idFilter, idLabel);		
+				enlazarAalbumLabel(idAlbum, idLabel);
 			}
 		}
 
-		public void liberarRelaciones(File file) //preguntar a leo
+		public void liberarRelaciones(File file)		 //preguntar a leo
 		{
-			// TODO Auto-generated method stub	
+			// TODO Auto-generated method stub	         // Metodo formatear tablas (antes de cerrar el programa)
 		}
 		
 		//---------------------
-		//--funciones enlazar--
+		//--funciones enlazar-- 
 		//---------------------
 		
-		public void enlazarAlbumLabel(Title album, Label label)
+//		public void enlazarAlbumLabel(int idAlbum, int idLabel)
+//		{
+//			//se ingresa directamente en sql
+//		}
+		public void enlazarFilterLabel(int idFilter, int idLabel)
 		{
-			insert(album.getID(), label.getID());
-		}
-		public void enlazarFilterLabel(Filter filter, Label label)
-		{
-			insert(filter.getID(), label.getID());
+			//se ingresa directamente en sql
 		}	
-		public void enlazarAlbumFilter(Title album, Filter filter)
+		public void enlazarAlbumFilter(int idAlbum, int idFilter)
 		{
-			insert(album.getID(), filter.getID());
+			//se ingresa directamente en sql
 		}
 		
-		public void enlazarAalbumLabel(Title album, Label label)
+		public void enlazarAalbumLabel(int idAlbum, int idLabel)
 		{
-			insert(album.getID(), label.getID());
+			//se ingresa directamente en sql
 		}
 		
-		//------------------------
-		//--funciones existencia--
-		//------------------------
-		
-		public Title verExistenciaTitulo(String path)
-		{
-			TitleDAO titleDAO = (TitleDAO) Factory.getObject("TitleDAO");
-			
-			Title title = titleDAO.findByPath(path);
-			
-			if (title == null)		title = titleDAO.setAlbum(path);
-			
-			return title;
+//		//------------------------
+//		//--funciones existencia--  Va a ser reemplazado por estaEnTabla 
+//		//------------------------
+//		
+//		public Title verExistenciaTitulo(String path)
+//		{
+//			TitleDAO titleDAO = (TitleDAO) Factory.getObject("TitleDAO");
+//			
+//			Title title = titleDAO.findByPath(path);
+//			
+//			if (title == null)		title = titleDAO.setAlbum(path);
+//			
+//			return title;
+//		}
+//		public Label verExistenciaLabel(String name)
+//		{
+//			LabelDAO labelDAO = (LabelDAO) Factory.getObject("LabelDAO");		
+//			return labelDAO.setLabel(name);
+//		}
+//		public Filter verExistenciaFilter(String name)
+//		{
+//			FilterDAO filterDAO = (FilterDAO) Factory.getObject("FilterDAO");
+//			return filterDAO.setFilter(name);
+//		}
+//	
 		}
-		public Label verExistenciaLabel(String name)
-		{
-			LabelDAO labelDAO = (LabelDAO) Factory.getObject("LabelDAO");		
-			return labelDAO.setLabel(name);
-		}
-		public Filter verExistenciaFilter(String name)
-		{
-			FilterDAO filterDAO = (FilterDAO) Factory.getObject("FilterDAO");
-			return filterDAO.setFilter(name);
-		}
-	
-}
 
 
