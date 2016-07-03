@@ -62,6 +62,61 @@ public class BaseDeDatos {
 			e.printStackTrace();
 		}
 	 }
+	 
+	 
+	 
+	//te devuelve el id_filter correspondiente, ya sea q lo encontro o no (porque si no es asi, lo iserta)
+	public int estasEnLaTabla_Filter(String unFilter) {
+
+		CallableStatement consulta = null;
+
+		try {
+			// ejecuto el store
+			System.out.println(this.getConexion()+",");
+		    consulta = conexion.prepareCall("{call dbo.st_estasEnLaTabla_Filter(?,?,?)}");
+			consulta.setString(1, unFilter);
+			consulta.registerOutParameter(2, java.sql.Types.INTEGER);
+			consulta.registerOutParameter(3, java.sql.Types.INTEGER);
+			consulta.execute();
+			
+			if(consulta.getBoolean(2)){
+				return consulta.getInt(3);
+				
+			}
+			else{
+				
+				return this.insert_FILTER(unFilter);
+
+			}
+
+		} catch (Exception e4) {
+			e4.printStackTrace();
+			throw new RuntimeException(e4);
+		}
+		
+
+	}
+	
+	//seter FILTER. Devuelve su id correspondiente (@id_filter)
+	public int insert_FILTER(String unFiler){
+		
+		CallableStatement consulta = null;
+
+		try {
+			consulta = conexion.prepareCall("{call dbo.st_insert_FILTER(?,?)}");
+			consulta.setString(1, unFiler);
+			consulta.registerOutParameter(2, java.sql.Types.INTEGER);
+			consulta.execute();
+			
+			return consulta.getInt(2);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
+		
+	}
+	
 
 	
 	 public int buscar_filter(String nombreFilter){
@@ -144,9 +199,8 @@ public class BaseDeDatos {
 	 }
 	 
 	 
-	 
-	 //te devuelvo un cero si no lo encontro,si lo encuentra de da el id_label el id corespondiente
-	public int estasEnLaTabla_Label(String unLabel) {
+	//te devuelve el id_label correspondiente, ya sea q lo encontro o no (porque si no es asi, lo iserta)
+	public int estasEnLaTabla_Label(String unLabel,int id_filter) {
 
 		CallableStatement consulta = null;
 
@@ -164,6 +218,8 @@ public class BaseDeDatos {
 				
 			}
 			else{
+				this.insert_Label(unLabel,id_filter);
+				
 				return 0;
 			}
 
@@ -173,6 +229,26 @@ public class BaseDeDatos {
 		}
 		
 
+	}
+	
+	public int insert_Label(String unLabel,int id_filter){
+		
+		CallableStatement consulta = null;
+
+		try {
+			consulta = conexion.prepareCall("{call dbo.st_insert_LABEL(?,?,?)}");
+			consulta.setString(1, unLabel);
+			consulta.setInt(2, id_filter);
+			consulta.registerOutParameter(3, java.sql.Types.INTEGER);
+			consulta.execute();
+			
+			return consulta.getInt(3);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
+		
 	}
 	
 	
@@ -235,27 +311,28 @@ public class BaseDeDatos {
 			}
 		 
 	 }
-	
-	
-	//seter FILTER. Devuelve su id correspondiente (@id_filter)
-	public int insert_FILTER(String unFiler){
-		
-		CallableStatement consulta = null;
+	 
+	 //----------------------------------------ALBUM-------------------------------------------------------
+		public int insertarAlbum(String unPath){
+			
+			CallableStatement consulta = null;
 
-		try {
-			consulta = conexion.prepareCall("{call dbo.st_insert_FILTER(?,?)}");
-			consulta.setString(1, unFiler);
-			consulta.registerOutParameter(2, java.sql.Types.INTEGER);
-			consulta.execute();
+			try {
+				consulta = conexion.prepareCall("{call dbo.st_insert_Album(?,?)}");
+				consulta.setString(1, unPath);
+				consulta.registerOutParameter(2, java.sql.Types.INTEGER);
+				consulta.execute();
+				
+				return consulta.getInt(2);
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new RuntimeException(e);
+			}
 			
-			return consulta.getInt(2);
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new RuntimeException(e);
 		}
-		
-	}
+	
+
 	
 	//Funciones que faltan
 //		public boolean seModifico(File file)
@@ -267,16 +344,15 @@ public class BaseDeDatos {
 //		
 		public void arregloDeLinea(File file, ArrayList<String> lineaInfo)
 		{
-			int idFilter = this.verExistenciaFilter(lineaInfo.remove(0)); //hacerlo int, y revisar estasEnLaTabla (cambiar estasEnLaTabla para insertar)
-			int idAlbum = this.verExistenciaTitulo(file.getParent());      //lo mismo que arriba
+			int idFilter = this.estasEnLaTabla_Filter(lineaInfo.remove(0)); 
+			int idAlbum = this.insertarAlbum(file.getParent());      
 			
-			this.enlazarAlbumFilter(idAlbum, idFilter);                        //directamente paso el ID
+			this.enlazarAlbumFilter(idAlbum, idFilter);                        
 			
-			for(String name: lineaInfo)
+			for(String nameLabel: lineaInfo)
 			{
-				int idLabel = this.verExistenciaLabel(name);
-				enlazarFilterLabel(idFilter, idLabel);		
-				enlazarAalbumLabel(idAlbum, idLabel);
+				int idLabel = this.estasEnLaTabla_Label(nameLabel,idFilter);		
+				enlazarAlbumLabel(idAlbum, idLabel);
 			}
 		}
 
@@ -293,18 +369,39 @@ public class BaseDeDatos {
 //		{
 //			//se ingresa directamente en sql
 //		}
-		public void enlazarFilterLabel(int idFilter, int idLabel)
-		{
-			//se ingresa directamente en sql
-		}	
+	
 		public void enlazarAlbumFilter(int idAlbum, int idFilter)
 		{
-			//se ingresa directamente en sql
+			CallableStatement consulta = null;
+
+			try {
+				consulta = conexion.prepareCall("{call dbo.st_insert_FilterAlbum(?,?)}");
+				consulta.setInt(1, idAlbum);
+				consulta.setInt(2, idFilter);
+				consulta.execute();			
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new RuntimeException(e);
+			}
+			
 		}
 		
-		public void enlazarAalbumLabel(int idAlbum, int idLabel)
+		public void enlazarAlbumLabel(int idAlbum, int idLabel)
 		{
-			//se ingresa directamente en sql
+			CallableStatement consulta = null;
+
+			try {
+				consulta = conexion.prepareCall("{call dbo.st_insert_LabelAlbum(?,?)}");
+				consulta.setInt(1, idAlbum);
+				consulta.setInt(2, idLabel);
+				consulta.execute();			
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new RuntimeException(e);
+			}
+			
 		}
 		
 //		//------------------------
