@@ -8,6 +8,7 @@ select @id_filter=id_filter from FILTER
 where filter_nombre = @nombre_filter
 end
 
+go
 
 
 create procedure st_todos_filters
@@ -18,7 +19,7 @@ end
 
 
 
-
+go
 
 create procedure st_buscar_filters_album
 @id_album numeric(10,0)
@@ -30,7 +31,7 @@ where @id_album = fa_album
 end
 
 
-
+go
 
  --si esta en la tabla de filter te devuelve  @bool =1 y @id_filter el id corespondiente, si no esta @bool = 0 y @id_filter es basura
  create procedure st_estasEnLaTabla_Filter
@@ -53,7 +54,7 @@ declare @cant int
 
 
 end
-
+go
 --seter FILTER. Devuelve su id correspondiente (@id_filter)
 create procedure st_insert_FILTER
 @filter_nombre nvarchar(255),
@@ -68,7 +69,7 @@ begin
 end
 
 
-
+go
 ------------------------------------LABEL----------------------------------------------------------------------------------
 create procedure st_buscar_Label
 @nombre_label nvarchar(255),
@@ -80,7 +81,7 @@ where label_nombre = @id_label
 end
 
 
-
+go
 
 create procedure st_todos_Labels
 AS
@@ -88,7 +89,7 @@ begin
 select label_nombre from LABEL
 end
 
-
+go
 
 create procedure st_todos_Labels_de_un_filter
 @filter_nombre nvarchar(255)
@@ -100,7 +101,7 @@ inner join  FILTER on filter = id_filter
 where filter_nombre= @filter_nombre
 
 end
-
+go
  --si esta en la tabla de Label te devuelve  @bool =1 y @id_label el id corespondiente, si no esta @bool = 0 y @id_label es basura
  create procedure st_estasEnLaTabla_Label
  @nombre nvarchar(255),
@@ -122,7 +123,7 @@ declare @cant int
 
 end
 
-
+go
 --seter LABEL, @filter el el id_filter al cual pertenece. Devuelve su id correspondiente (@id_label)
 create procedure st_insert_LABEL
 @label_nombre nvarchar(255),
@@ -131,14 +132,14 @@ create procedure st_insert_LABEL
 as
 begin
 
-    insert into FILTER (label_nombre,filter)
+    insert into LABEL(label_nombre,filter)
 	values (@label_nombre,@filter)
 	set @id_label = scope_identity()
     
 end
 
 
-
+go
 ---------------------------------------album----------------------------------------------------------------
 
 -- seter de ALBUM. Devuelve su id correspondiente (@id_album)
@@ -154,7 +155,7 @@ begin
     
 end
 
-
+go
 create procedure st_getPath
 
 AS
@@ -162,7 +163,7 @@ begin
 
 end
 
-
+go
 ---------------------------------------FILTER/ALBUM----------------------------------------------------------------
 create procedure st_insert_FilterAlbum
 @id_album numeric(10,0),
@@ -176,7 +177,7 @@ begin
 end
 
 ---------------------------------------LABEL/ALBUM----------------------------------------------------------------
-
+go
 create procedure st_insert_LabelAlbum
 @id_album numeric(10,0),
 @id_label numeric(10,0)
@@ -189,7 +190,7 @@ begin
 end
 
 -------------------------------------------otros--------------------------------------------------------------------
-
+go
 create procedure st_formatearTablas
 as
 begin
