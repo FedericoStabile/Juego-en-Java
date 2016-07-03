@@ -4,18 +4,12 @@ import java.io.File;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import algoII.tp.DAOs.FilterDAO;
-import algoII.tp.DAOs.LabelDAO;
-import algoII.tp.DAOs.TitleDAO;
-import algoII.tp.def.Filter;
-import algoII.tp.def.Label;
-import algoII.tp.def.Title;
 
 
 public class BaseDeDatos {
@@ -64,6 +58,7 @@ public class BaseDeDatos {
 	 }
 	 
 	 
+//  ------------------------ Comienzo de Filter------------------------------------------------------------------------
 	 
 	//te devuelve el id_filter correspondiente, ya sea q lo encontro o no (porque si no es asi, lo iserta)
 	public int estasEnLaTabla_Filter(String unFilter) {
@@ -199,7 +194,12 @@ public class BaseDeDatos {
 	 }
 	 
 	 
-	//te devuelve el id_label correspondiente, ya sea q lo encontro o no (porque si no es asi, lo iserta)
+	 
+	//  ------------------------ Comienzo de Label------------------------------------------------------------------------
+
+	 
+	 
+	//te devuelve el id_label correspondiente, ya sea q lo encontro o no (porque si no es asi, lo inserta)
 	public int estasEnLaTabla_Label(String unLabel,int id_filter) {
 
 		CallableStatement consulta = null;
@@ -349,26 +349,13 @@ public class BaseDeDatos {
 			
 			this.enlazarAlbumFilter(idAlbum, idFilter);                        
 			
-			for(String nameLabel: lineaInfo)
+			for(String unLabel: lineaInfo)
 			{
-				int idLabel = this.estasEnLaTabla_Label(nameLabel,idFilter);		
+				int idLabel = this.estasEnLaTabla_Label(unLabel,idFilter);		
 				enlazarAlbumLabel(idAlbum, idLabel);
 			}
 		}
 
-		public void liberarRelaciones(File file)		 //preguntar a leo
-		{
-			// TODO Auto-generated method stub	         // Metodo formatear tablas (antes de cerrar el programa)
-		}
-		
-		//---------------------
-		//--funciones enlazar-- 
-		//---------------------
-		
-//		public void enlazarAlbumLabel(int idAlbum, int idLabel)
-//		{
-//			//se ingresa directamente en sql
-//		}
 	
 		public void enlazarAlbumFilter(int idAlbum, int idFilter)
 		{
@@ -403,6 +390,20 @@ public class BaseDeDatos {
 			}
 			
 		}
+		
+		 public void formatearTablas(){
+			 
+				CallableStatement consulta = null;	
+				try {
+					// ejecuto el store
+				    consulta = conexion.prepareCall("{call dbo.st_formatearTablas}");
+					consulta.execute();
+
+				} catch (Exception e4) {
+					e4.printStackTrace();
+					throw new RuntimeException(e4);
+				}
+		 }
 		
 //		//------------------------
 //		//--funciones existencia--  Va a ser reemplazado por estaEnTabla 
