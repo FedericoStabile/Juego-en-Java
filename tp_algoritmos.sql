@@ -1,64 +1,4 @@
 
-create table FILTER
-(
-	id_filter       numeric(10,0) identity (1,1),
-	filter_nombre   nvarchar(255),
-
-
-	PRIMARY KEY (id_filter)
-)
-
-
-create table ALBUM
-(
-	id_album          numeric(10,0) identity (1,1),
-	album_path        nvarchar(255),
-	album_dicImagen   nvarchar(255),
-	fecha_modificacion  datetime,
-
-
-	PRIMARY KEY (id_album)
-)
-
-
-
-create table FILTER_ALBUM
-( 
-	fa_album      numeric(10,0)      NOT NULL,
-	fa_filter     numeric(10,0)      NOT NULL,
-
-    PRIMARY KEY	(fa_album, fa_filter), 
-	FOREIGN KEY (fa_album)      references ALBUM(id_album), 
-	FOREIGN KEY (fa_filter)     references FILTER(id_filter) 
-	
-)
-
-
-
-create table LABEL
-(
-	id_label       numeric(10,0) identity (1,1),
-	label_nombre   nvarchar(255),
-	filter         numeric(10,0),
-
-	FOREIGN KEY (filter)           references FILTER(id_filter), 
-	PRIMARY KEY (id_label)
-)
-
-
-create table LABEL_ALBUM
-( 
-	la_album      numeric(10,0)      NOT NULL,
-	la_label     numeric(10,0)       NOT NULL,
-
-    PRIMARY KEY	(la_album, la_label), 
-	FOREIGN KEY (la_album)      references ALBUM(id_album), 
-	FOREIGN KEY (la_label)      references LABEL(id_label) 
-	
-)
-
-
-
 create procedure st_buscar_filter
 @nombre_filter nvarchar(255),
 @id_filter numeric(10,0) out 
@@ -215,6 +155,14 @@ begin
 end
 
 
+create procedure st_getPath
+
+AS
+begin
+
+end
+
+
 ---------------------------------------FILTER/ALBUM----------------------------------------------------------------
 create procedure st_insert_FilterAlbum
 @id_album numeric(10,0),
@@ -237,5 +185,18 @@ begin
 
     insert into LABEL_ALBUM(la_album,la_label)
 	values (@id_album,@id_label)
+    
+end
+
+-------------------------------------------otros--------------------------------------------------------------------
+
+create procedure st_formatearTablas
+as
+begin
+
+delete FILTER_ALBUM
+delete LABEL_ALBUM
+delete ALBUM
+delete LABEL
     
 end
