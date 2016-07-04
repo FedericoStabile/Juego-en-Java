@@ -1,0 +1,130 @@
+package algoII.tp.Imples;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import algoII.tp.Imples.BaseDeDatos;
+
+public class LectorPath
+{
+	static char caracterAsignacion;
+	static char caracterAgregacion;
+	static char caracterFinLinea;
+	static BaseDeDatos control = new BaseDeDatos("com.microsoft.sqlserver.jdbc.SQLServerDriver","jdbc:sqlserver://LAPTOP-IH6ET2PC\\SQLSERVER2012:1433;databaseName=algoritmos2","testjava8","testjava8");
+	
+
+//	public static void tomarCaracteresDeParseo()
+//	{
+//		caracterAsignacion 	= (char)	Factory.getString("CharAsignacion");
+//		caracterAgregacion 	= (char)	Factory.getString("CharAgreg");
+//		caracterFinLinea 	= (char)	Factory.getString("CharFinL");	
+//	}
+			
+	public static void lecturaDireccion(File[] files)
+	{	
+		
+		for (File file : files)
+		{
+
+			if (file.isDirectory())		lecturaDireccion(file.listFiles());
+
+			analisisArchivoInfo(file);
+	    }
+
+	}
+	
+	public static void analisisArchivoInfo(File file)
+	{
+		
+
+		//String info = (String)Factory.getString("info.jml");
+		//control = (BaseDeDatos)Factory.getObject("ControlBD");
+
+        String info = "info.jml";
+		if (info.equals(file.getName()))
+		{
+			
+			System.out.println("rompee");
+
+//			if (control.seModifico(file))  
+//			{
+//				control.liberarRelaciones(file);	//revisar liberar relaciones
+			
+
+				actualizarRegistro(file);
+				
+//			}
+		}
+	}
+	
+	public static void actualizarRegistro (File file)
+	{
+		ArrayList<String> infoPorRenglon = new ArrayList<String>();	
+		String palabra = "";
+		FileInputStream fileInput= null;
+//		tomarCaracteresDeParseo();
+		try
+		{
+			fileInput = new FileInputStream(file);
+			int r;
+
+			while ((r = fileInput.read()) != -1)
+			{
+			 System.out.println(" entra al while");
+			   char c = (char) r;
+			   if(esCharNormal(c))
+			   {
+			   		palabra = palabra + c;
+			   }
+			   if(c == '='  || c == ';' )
+			   {
+				   infoPorRenglon.add(palabra);
+				   palabra="";
+				   // se saco caracter de asignacion, y caracter de agregacion
+				   
+			   }		  
+			   if(c == '\n' && !(infoPorRenglon.isEmpty()))
+			   {
+				   // se saco caracter final fin linea
+				   infoPorRenglon.add(palabra);
+				   control.arregloDeLinea(file, infoPorRenglon); // Cambiar
+				   palabra="";	infoPorRenglon.clear();
+			   }
+			}
+			if (!(infoPorRenglon.isEmpty()))
+				{
+				infoPorRenglon.add(palabra);
+				control.arregloDeLinea(file, infoPorRenglon);
+				}
+		}
+		catch(IOException ex)
+		{
+			System.out.println("Error en apertura de:"+file.getName());
+			ex.printStackTrace();
+		}
+		try
+		{
+			fileInput.close();
+		}
+		catch(IOException ex)
+		{
+			System.out.println("Error en Cerrar:"+file.getName());
+			ex.printStackTrace();
+		}
+	}
+	
+	public static boolean esCharNormal(char c)
+	{
+		return(c != '=' && c!= ';' && c!= '\n' && c!= ' ' && c!= '\n');
+		// saco los tres caracters
+	}
+
+	public static void mostrarOpciones()
+	{
+		System.out.println("Mostrar posibles opciones para ver funcionalidad de lo hecho");
+	}
+	
+}
+
+
